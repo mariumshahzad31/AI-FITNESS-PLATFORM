@@ -1,0 +1,76 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: aifit-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fitness_user
+      POSTGRES_PASSWORD: fitness_password
+      POSTGRES_DB: ai_fitness_platform
+    ports:
+      # Host 5433 → container 5432 (avoids clashing with a local PostgreSQL on 5432).
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # schema.sql + seed.sql run automatically on first init (alphabetical order).
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fitness_user -d ai_fitness_platform"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ai-service:
+    build: ./ai-service
+    container_name: aifit-ai
+    restart: unless-stopped
+    environment:
+      FRONTEND_ORIGIN: http://localhost:3000
+      BACKEND_ORIGIN: http://localhost:5000
+      AI_SERVICE_PORT: "8000"
+    ports:
+      - "8000:8000"
+
+  backend:
+    build: ./backend
+    container_name: aifit-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+    environment:
+      PORT: "5000"
+      NODE_ENV: production
+      DATABASE_URL: postgresql://fitness_user:fitness_password@db:5432/ai_fitness_platform
+      FRONTEND_ORIGIN: http://localhost:3000
+      AI_SERVICE_URL: http://ai-service:8000
+      AI_TIMEOUT_MS: "15000"
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET:-dev-access-secret-change-me}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-dev-refresh-secret-change-me}
+      JWT_ACCESS_TTL: 15m
+      JWT_REFRESH_TTL_DAYS: "7"
+      BCRYPT_ROUNDS: "12"
+    ports:
+      - "5000:5000"
+    # Seed the demo account after the DB is ready, then start the API.
+    command: sh -c "node scripts/seed.js || true; node src/index.js"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:5000
+    container_name: aifit-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+    ports:
+      - "3000:3000"
+
+volumes:
+  pgdata:

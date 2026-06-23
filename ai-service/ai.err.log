@@ -1,0 +1,6 @@
+INFO:     Started server process [29272]
+INFO:     Waiting for application startup.
+2026-06-23 19:40:45,346 - AI Service - INFO - ML models loaded.
+2026-06-23 19:40:45,356 - AI Service - INFO - ML models warmed (prediction paths primed).
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)

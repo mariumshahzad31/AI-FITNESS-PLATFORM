@@ -1,0 +1,50 @@
+
+> ai-fitness-platform-frontend@2.0.0 dev
+> next dev -p 3000
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.2.107:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.1s
+ ○ Compiling /dashboard/form-analyzer ...
+ ✓ Compiled /dashboard/form-analyzer in 10.8s (915 modules)
+ GET /dashboard/form-analyzer 200 in 11750ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1114ms (918 modules)
+ GET / 200 in 1602ms
+ GET / 200 in 147ms
+ ○ Compiling /icon.svg ...
+ ✓ Compiled /icon.svg in 770ms (591 modules)
+ GET /icon.svg?7e386e5df67c41da 200 in 1232ms
+ GET / 200 in 846ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 2.9s (917 modules)
+ GET /login 200 in 3507ms
+ GET /login 200 in 181ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 1636ms (949 modules)
+ GET /dashboard 200 in 1983ms
+ ○ Compiling /dashboard/form-analyzer ...
+ ✓ Compiled /dashboard/form-analyzer in 1808ms (616 modules)
+ GET /dashboard/form-analyzer 200 in 2141ms
+ GET /dashboard/form-analyzer 200 in 214ms
+ GET /dashboard 200 in 162ms
+ GET /login 200 in 142ms
+ GET /login 200 in 124ms
+ GET /login 200 in 252ms
+ GET /login 200 in 125ms
+ GET /login 200 in 169ms
+ GET /login 200 in 123ms
+ ✓ Compiled in 1005ms (363 modules)
+ GET / 200 in 94ms
+ ✓ Compiled in 1543ms (960 modules)
+ GET / 200 in 284ms
+ GET / 200 in 294ms
+ GET / 200 in 62ms
+ ○ Compiling /register ...
+ ✓ Compiled /register in 2.7s (953 modules)
+ GET /register 200 in 3301ms
+ GET /register 200 in 108ms
