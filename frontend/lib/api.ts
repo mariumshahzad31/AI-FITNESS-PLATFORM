@@ -13,7 +13,11 @@ import type {
   WorkoutPlan,
 } from "./types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+// Render Blueprint wiring injects a bare hostname (no scheme); default to https.
+const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = /^https?:\/\//i.test(RAW_API_URL)
+  ? RAW_API_URL
+  : `https://${RAW_API_URL}`;
 
 export const api = axios.create({
   baseURL: BASE_URL,

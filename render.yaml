@@ -1,0 +1,113 @@
+# =====================================================================
+# AI FITNESS PLATFORM — Render Blueprint (100% free tier)
+# ---------------------------------------------------------------------
+# One-click deploy of the full stack on Render:
+#   • PostgreSQL 16        (free managed database)
+#   • AI service (FastAPI) (free web service)
+#   • Backend (Express)    (free web service)
+#   • Frontend (Next.js)   (free web service)
+#
+# Deploy:  Render Dashboard → New → Blueprint → connect this repo →
+#          Render reads this file and provisions everything.
+#
+# Cross-service URLs are auto-wired via `fromService` (Render injects the
+# bare hostname; the code normalises it to https://). JWT secrets are
+# auto-generated. The database schema, reference data, and the demo
+# account are applied during the backend build (free tier has no
+# pre-deploy command, so migration runs in the build step).
+#
+# Note: free web services sleep after ~15 min idle; first request after
+# a nap takes ~30-50s to wake. This is expected, not an error.
+# =====================================================================
+
+databases:
+  - name: ai-fitness-platform-db
+    databaseName: ai_fitness_platform
+    user: fitness_user
+    plan: free
+
+services:
+  # ----- AI / ML service (FastAPI + scikit-learn) --------------------
+  - type: web
+    name: ai-fitness-platform-ai
+    runtime: python
+    plan: free
+    rootDir: ai-service
+    buildCommand: pip install -r requirements.txt && python -m app.ml.train
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: FRONTEND_ORIGIN
+        fromService:
+          type: web
+          name: ai-fitness-platform-frontend
+          property: host
+      - key: BACKEND_ORIGIN
+        fromService:
+          type: web
+          name: ai-fitness-platform-backend
+          property: host
+
+  # ----- Backend API (Express) ---------------------------------------
+  - type: web
+    name: ai-fitness-platform-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    # Free tier has no pre-deploy hook, so apply schema + seed in the build.
+    # schema.sql / seed.sql / seed.js are all idempotent (safe to re-run).
+    buildCommand: npm install && npm run migrate && npm run seed
+    startCommand: node src/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ai-fitness-platform-db
+          property: connectionString
+      - key: AI_SERVICE_URL
+        fromService:
+          type: web
+          name: ai-fitness-platform-ai
+          property: host
+      - key: AI_TIMEOUT_MS
+        value: "30000"
+      - key: FRONTEND_ORIGIN
+        fromService:
+          type: web
+          name: ai-fitness-platform-frontend
+          property: host
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_TTL
+        value: 15m
+      - key: JWT_REFRESH_TTL_DAYS
+        value: "7"
+      - key: BCRYPT_ROUNDS
+        value: "12"
+
+  # ----- Frontend (Next.js 15) ---------------------------------------
+  - type: web
+    name: ai-fitness-platform-frontend
+    runtime: node
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    # next start respects -p $PORT (Render injects PORT); bind all interfaces.
+    startCommand: npx next start -p $PORT -H 0.0.0.0
+    envVars:
+      - key: NODE_VERSION
+        value: "20.18.0"
+      # Baked at build time — Render exposes fromService refs during builds.
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: ai-fitness-platform-backend
+          property: host

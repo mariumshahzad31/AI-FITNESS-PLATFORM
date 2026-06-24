@@ -3,6 +3,25 @@
 This guide deploys the full stack on free tiers and gives you a public live URL with a
 persistent database. Total cost: **$0**.
 
+## Option A — One-click Render Blueprint (everything on Render, $0)
+
+The repo ships a [`render.yaml`](render.yaml) Blueprint that provisions the **entire stack on
+Render's free tier** — PostgreSQL + AI service + backend + frontend — with cross-service URLs
+auto-wired and JWT secrets auto-generated. No manual env-var entry required.
+
+1. Push this repo to GitHub (already done if you're reading this on GitHub).
+2. Render Dashboard → **New → Blueprint** → connect the `AI-FITNESS-PLATFORM` repo.
+3. Render reads `render.yaml`, shows the four resources, and you click **Apply**.
+4. Wait for all services to go live (first build ~3–5 min; the backend build runs the schema
+   migration + demo seed automatically). Open the **frontend** service URL.
+5. Log in with the demo account: **`demo@aifitness.app`** / **`Demo1234!`**.
+
+> Free web services sleep after ~15 min idle; the first request after a nap takes ~30–50 s to
+> wake. That's the cold start, not an error. Keep `/health` warm with a free UptimeRobot ping.
+
+The step-by-step manual route below (Option B) is kept for reference / mixed hosting (e.g.
+Neon + Vercel).
+
 ## The free stack
 
 | Component            | Host                       | Free tier notes                                        |

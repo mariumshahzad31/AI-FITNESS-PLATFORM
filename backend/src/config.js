@@ -13,6 +13,12 @@ function required(name, fallback) {
 
 const isProd = process.env.NODE_ENV === 'production';
 
+// Render's Blueprint wiring (fromService) injects a bare hostname with no
+// scheme (e.g. "my-svc.onrender.com"). CORS origin matching and the AI client
+// both need a full URL, so normalise to https:// when a scheme is missing.
+const withScheme = (url) =>
+  !url || /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
 // In production, secrets MUST be provided. In development we fall back to
 // clearly-marked dev secrets so the stack runs with zero configuration.
 const devSecret = (label) => {
@@ -29,8 +35,8 @@ export const config = {
   databaseUrl:
     process.env.DATABASE_URL ||
     'postgresql://fitness_user:fitness_password@localhost:5432/ai_fitness_platform',
-  frontendOrigin: process.env.FRONTEND_ORIGIN || 'http://localhost:3000',
-  aiServiceUrl: process.env.AI_SERVICE_URL || 'http://localhost:8000',
+  frontendOrigin: withScheme(process.env.FRONTEND_ORIGIN) || 'http://localhost:3000',
+  aiServiceUrl: withScheme(process.env.AI_SERVICE_URL) || 'http://localhost:8000',
   aiTimeoutMs: Number(process.env.AI_TIMEOUT_MS) || 15000,
   jwt: {
     accessSecret: process.env.JWT_ACCESS_SECRET || devSecret('jwt-access-secret'),

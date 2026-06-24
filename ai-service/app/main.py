@@ -26,8 +26,16 @@ from .ml import coach, engine, nlp
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - AI Service - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-FRONTEND_ORIGIN = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
-BACKEND_ORIGIN = os.getenv("BACKEND_ORIGIN", "http://localhost:5000")
+def _with_scheme(url: str) -> str:
+    # Render Blueprint wiring injects a bare hostname (no scheme); CORS origin
+    # matching needs a full URL, so default to https:// when none is present.
+    if url and not url.startswith(("http://", "https://")):
+        return f"https://{url}"
+    return url
+
+
+FRONTEND_ORIGIN = _with_scheme(os.getenv("FRONTEND_ORIGIN", "http://localhost:3000"))
+BACKEND_ORIGIN = _with_scheme(os.getenv("BACKEND_ORIGIN", "http://localhost:5000"))
 ALLOWED_ORIGINS = list({FRONTEND_ORIGIN, BACKEND_ORIGIN})
 
 
