@@ -42,7 +42,7 @@ export default function NutritionPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold sm:text-3xl">Nutrition &amp; activity log</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Type entries in plain language — the AI parses calories, steps and more.</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Type entries in plain language — entries are parsed locally into meals, activity, calories and steps.</p>
       </div>
 
       <Card>

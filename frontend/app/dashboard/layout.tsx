@@ -117,6 +117,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             Welcome back, <span className="font-semibold text-slate-700 dark:text-slate-200">{user.full_name || user.email}</span>
           </div>
           <div className="flex items-center gap-3">
+            <span className="hidden rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300 sm:inline-flex">
+              {user.email.endsWith("@local.invalid") ? "Saved on this device" : "Account synced"}
+            </span>
             <button onClick={toggle} className="btn-ghost p-2" aria-label="Toggle theme">
               {dark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>

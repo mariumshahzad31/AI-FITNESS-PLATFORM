@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Activity, ArrowRight, Brain, Dumbbell, HeartPulse, Sparkles } from "lucide-react";
@@ -8,8 +8,10 @@ import { useAuth } from "@/components/providers/AuthProvider";
 import { Spinner } from "@/components/ui";
 
 export default function LandingPage() {
-  const { user, loading } = useAuth();
+  const { user, loading, continueAsGuest } = useAuth();
   const router = useRouter();
+  const [guestLoading, setGuestLoading] = useState(false);
+  const [guestError, setGuestError] = useState<string | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -17,6 +19,18 @@ export default function LandingPage() {
       router.replace(user.onboarding_completed ? "/dashboard" : "/onboarding");
     }
   }, [user, loading, router]);
+
+  const startGuest = async () => {
+    setGuestLoading(true);
+    setGuestError(null);
+    try {
+      const guest = await continueAsGuest();
+      router.replace(guest.onboarding_completed ? "/dashboard" : "/onboarding");
+    } catch (error) {
+      setGuestError(error instanceof Error ? error.message : String(error));
+      setGuestLoading(false);
+    }
+  };
 
   if (loading || user) {
     return (
@@ -71,6 +85,10 @@ export default function LandingPage() {
           Get Started
           <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
         </Link>
+        <button type="button" onClick={startGuest} disabled={guestLoading} className="mt-4 text-sm font-semibold text-brand-700 underline-offset-4 hover:underline disabled:opacity-60 dark:text-brand-300">
+          {guestLoading ? "Starting local profile…" : "Continue as guest — no account needed"}
+        </button>
+        {guestError && <p role="alert" className="mt-2 text-sm text-red-600">{guestError}</p>}
       </section>
     </main>
   );

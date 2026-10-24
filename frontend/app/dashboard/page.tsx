@@ -75,8 +75,8 @@ export default function OverviewPage() {
         {/* Calorie + macro targets */}
         <Card className="lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">AI nutrition targets</h2>
-            <Badge>AI-personalized</Badge>
+            <h2 className="font-display text-lg font-semibold">Daily nutrition targets</h2>
+            <Badge>Personalized targets</Badge>
           </div>
           <div className="mt-4 space-y-2">
             <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400">

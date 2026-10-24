@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { useRouter } from "next/navigation";
 import * as apiClient from "@/lib/api";
 import { tokenStore } from "@/lib/tokens";
+import { clearCurrentUserId } from "@/lib/localDb";
 import type { User } from "@/lib/types";
 
 type AuthContextValue = {
@@ -11,6 +12,7 @@ type AuthContextValue = {
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
   register: (email: string, password: string, fullName: string) => Promise<User>;
+  continueAsGuest: () => Promise<User>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   setUser: (user: User) => void;
@@ -25,24 +27,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    // Failsafe: never let a slow or unavailable backend keep the app stuck on a
-    // loading spinner. If the session check hasn't resolved in time, render the
-    // app anyway — the user simply appears logged-out until the backend recovers.
-    const failsafe = setTimeout(() => {
-      if (active) setLoading(false);
-    }, 4000);
-
     (async () => {
-      if (!tokenStore.getAccess()) {
-        if (active) setLoading(false);
-        return;
-      }
       try {
         const me = await apiClient.fetchMe();
         if (active) setUser(me);
       } catch {
-        // Expired/invalid session or backend down — treat as logged-out.
-        tokenStore.clear();
+        if (active) setUser(null);
       } finally {
         if (active) setLoading(false);
       }
@@ -50,13 +40,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       active = false;
-      clearTimeout(failsafe);
     };
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     const res = await apiClient.login(email, password);
-    tokenStore.set(res.accessToken, res.refreshToken);
+    if (res.accessToken) {
+      tokenStore.set(res.accessToken, res.refreshToken);
+      clearCurrentUserId();
+    } else tokenStore.clear();
     setUser(res.user);
     return res.user;
   }, []);
@@ -64,13 +56,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = useCallback(async (email: string, password: string, fullName: string) => {
     const res = await apiClient.register(email, password, fullName);
     tokenStore.set(res.accessToken, res.refreshToken);
+    clearCurrentUserId();
     setUser(res.user);
     return res.user;
   }, []);
 
-  const logout = useCallback(async () => {
-    await apiClient.logout(tokenStore.getRefresh());
+  const continueAsGuest = useCallback(async () => {
     tokenStore.clear();
+    clearCurrentUserId();
+    const guest = await apiClient.createGuest();
+    setUser(guest);
+    return guest;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await apiClient.logout();
+    } finally {
+      tokenStore.clear();
+      clearCurrentUserId();
+    }
     setUser(null);
     router.push("/login");
   }, [router]);
@@ -81,8 +86,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, register, logout, refreshUser, setUser }),
-    [user, loading, login, register, logout, refreshUser]
+    () => ({ user, loading, login, register, continueAsGuest, logout, refreshUser, setUser }),
+    [user, loading, login, register, continueAsGuest, logout, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

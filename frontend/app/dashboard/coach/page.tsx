@@ -62,7 +62,7 @@ export default function CoachPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold sm:text-3xl">AI Coach</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Evidence-based guidance on training, nutrition and recovery.</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Instant, browser-based guidance on training, nutrition and recovery.</p>
       </div>
 
       <Card className="flex h-[min(70vh,640px)] flex-col p-0">

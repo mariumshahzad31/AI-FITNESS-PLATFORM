@@ -42,7 +42,7 @@ export default function RegisterPage() {
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-cyan-600 font-display font-bold text-white">AI</span>
           </Link>
           <h1 className="mt-4 font-display text-2xl font-bold">Create your account</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Start your AI-powered fitness journey</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Create an account stored on the fitness platform</p>
         </div>
 
         <form onSubmit={onSubmit} className="card space-y-4 p-6">

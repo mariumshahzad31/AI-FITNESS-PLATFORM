@@ -1,8 +1,11 @@
+# Runtime and ML dependencies used by app/main.py and app/ml/*.py.
+# Python 3.12 compatible; install with the pip command in README.md.
 fastapi==0.115.6
 uvicorn[standard]==0.32.1
 pydantic==2.10.4
 python-dotenv==1.0.1
 numpy==1.26.4
 pandas==2.2.3
+scipy==1.14.1
 scikit-learn==1.5.2
 joblib==1.4.2

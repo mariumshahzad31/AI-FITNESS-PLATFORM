@@ -29,7 +29,7 @@ export default function WorkoutPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-bold sm:text-3xl">Workout plan</h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">ML-generated program tuned to your goal and schedule.</p>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">A personalised program tuned to your goal, experience and schedule.</p>
         </div>
         <Button onClick={regenerate} loading={generating}>
           <RefreshCw className="h-4 w-4" /> Regenerate

@@ -178,7 +178,7 @@ def _exercises_per_day(session_minutes):
 
 
 def build_workout_plan(goal, fitness_level, days_per_week, session_minutes, weight_kg):
-    days_per_week = max(2, min(6, int(days_per_week)))
+    days_per_week = max(1, min(7, int(days_per_week)))
     session_minutes = max(15, min(120, int(session_minutes)))
     weight_kg = float(weight_kg) if weight_kg else 75.0
 

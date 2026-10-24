@@ -110,7 +110,7 @@ export default function OnboardingPage() {
       <div className="mb-8 text-center">
         <h1 className="font-display text-3xl font-bold">Let&apos;s build your plan</h1>
         <p className="mt-2 text-slate-500 dark:text-slate-400">
-          A few questions so the AI can personalise your targets and workouts.
+          A few questions so we can personalise your calorie targets and workouts.
         </p>
       </div>
 

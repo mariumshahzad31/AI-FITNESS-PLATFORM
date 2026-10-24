@@ -34,7 +34,7 @@ export const config = {
   port: Number(process.env.PORT) || 5000,
   databaseUrl:
     process.env.DATABASE_URL ||
-    'postgresql://fitness_user:fitness_password@localhost:5432/ai_fitness_platform',
+    'postgresql://fitness_user:fitness_password@localhost:5433/ai_fitness_platform',
   frontendOrigin: withScheme(process.env.FRONTEND_ORIGIN) || 'http://localhost:3000',
   aiServiceUrl: withScheme(process.env.AI_SERVICE_URL) || 'http://localhost:8000',
   aiTimeoutMs: Number(process.env.AI_TIMEOUT_MS) || 15000,

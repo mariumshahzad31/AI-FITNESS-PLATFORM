@@ -81,7 +81,7 @@ class WorkoutPlanRequest(BaseModel):
     user_id: int
     goal: str = "general_fitness"
     fitness_level: str = "Beginner"
-    days_per_week: int = Field(default=3, ge=2, le=6)
+    days_per_week: int = Field(default=3, ge=1, le=7)
     session_minutes: int = Field(default=45, ge=15, le=120)
     weight_kg: float = Field(default=75.0, gt=0)
 

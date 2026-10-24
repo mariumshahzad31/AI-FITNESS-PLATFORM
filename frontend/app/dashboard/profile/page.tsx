@@ -67,7 +67,9 @@ export default function ProfilePage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-2xl font-bold sm:text-3xl">Profile &amp; settings</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{user.email}</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {user.email.endsWith("@local.invalid") ? "Guest profile · saved on this device" : `${user.email} · stored in your server account`}
+        </p>
       </div>
 
       <Card>
