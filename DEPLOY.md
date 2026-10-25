@@ -70,9 +70,3 @@ IndexedDB; it is not synchronized or backed up. HTTPS is required for PWA
 installation and camera access. Google sign-in and Dexie Cloud sync are not
 configured; they require separate provider configuration and an explicit
 account-linking flow.
-
-HTTPS is required for PWA installation and camera access. Keep JWT and database
-credentials in server-side environment variables; never put them in
-`NEXT_PUBLIC_*` variables or commit real credentials. Google sign-in and Dexie
-Cloud sync are not configured; they require separate provider configuration
-and an explicit account-linking flow.
