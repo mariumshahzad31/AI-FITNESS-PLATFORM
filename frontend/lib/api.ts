@@ -10,8 +10,12 @@ const ACTIVITY_FACTORS: Record<string, number> = {
   sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, very_active: 1.9,
 };
 const DAY = 24 * 60 * 60 * 1000;
-const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-const BASE_URL = /^https?:\/\//i.test(RAW_API_URL) ? RAW_API_URL : `https://${RAW_API_URL}`;
+const RAW_API_URL = process.env.NEXT_PUBLIC_API_URL?.trim();
+const BASE_URL = RAW_API_URL
+  ? (/^https?:\/\//i.test(RAW_API_URL) ? RAW_API_URL : `https://${RAW_API_URL}`)
+  : process.env.NODE_ENV === "production"
+    ? ""
+    : "http://localhost:5000";
 const remoteApi = axios.create({
   baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
@@ -154,7 +158,11 @@ export function apiError(error: unknown): string {
   if (axios.isAxiosError(error)) {
     const data = error.response?.data as { message?: string; details?: { message: string }[] } | undefined;
     if (data?.details?.length) return data.details.map((item) => item.message).join(", ");
-    if (!error.response) return `Cannot reach the API at ${BASE_URL}. Start the backend and check frontend/.env.local.`;
+    if (!error.response) {
+      return BASE_URL
+        ? `Cannot reach the API at ${BASE_URL}. Start the backend and check frontend/.env.local.`
+        : "Cannot reach the API at /api on this origin.";
+    }
     return data?.message ?? error.message;
   }
   return error instanceof Error ? error.message : String(error);
